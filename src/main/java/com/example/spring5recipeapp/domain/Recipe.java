@@ -1,12 +1,11 @@
 package com.example.spring5recipeapp.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Recipe extends BaseEntity{
+
     private String description;
     private Integer prepTime;
     private Integer cookTime;
@@ -16,6 +15,9 @@ public class Recipe extends BaseEntity{
     private String directions;
     //todo add
     //private Difficulty difficulty
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
+    private Set<Ingredient> ingredients;
     @Lob
     private Byte[] image;
 
