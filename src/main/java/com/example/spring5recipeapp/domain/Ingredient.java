@@ -1,8 +1,6 @@
 package com.example.spring5recipeapp.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -11,7 +9,8 @@ public class Ingredient extends BaseEntity {
     private String description;
     private BigDecimal amount;
 
-//    private UnitOfMeasure uom;
+    @OneToOne(fetch = FetchType.EAGER)
+    private UnitOfMeasure uom;
 
     @ManyToOne
     private Recipe recipe;
