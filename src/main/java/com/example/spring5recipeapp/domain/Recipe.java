@@ -13,8 +13,9 @@ public class Recipe extends BaseEntity{
     private String source;
     private String url;
     private String directions;
-    //todo add
-    //private Difficulty difficulty
+
+    @Enumerated(value = EnumType.STRING)
+    private Difficulty difficulty;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
     private Set<Ingredient> ingredients;
@@ -86,6 +87,22 @@ public class Recipe extends BaseEntity{
 
     public void setImage(Byte[] image) {
         this.image = image;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public Set<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
     }
 
     public Notes getNotes() {
