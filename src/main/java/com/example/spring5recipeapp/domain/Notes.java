@@ -3,20 +3,21 @@ package com.example.spring5recipeapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 public class Notes extends BaseEntity {
 
     @OneToOne
-    private String recipe;
+    private Recipe recipe;
     @Lob
     private String recipeNotes;
 
-    public String getRecipe() {
+    public Recipe getRecipe() {
         return recipe;
     }
 
-    public void setRecipe(String recipe) {
+    public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
     }
 
