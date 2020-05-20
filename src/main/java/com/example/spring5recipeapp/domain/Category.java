@@ -2,7 +2,6 @@ package com.example.spring5recipeapp.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import java.util.Set;
 
 @Entity

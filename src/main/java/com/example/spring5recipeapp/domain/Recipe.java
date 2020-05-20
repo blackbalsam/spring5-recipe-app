@@ -34,6 +34,16 @@ public class Recipe extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
 
+    public Recipe() {
+    }
+
+    public Recipe(String description, Integer prepTime, Integer cookTime, Difficulty difficulty) {
+        this.description = description;
+        this.prepTime = prepTime;
+        this.cookTime = cookTime;
+        this.setDifficulty(difficulty);
+    }
+
     public String getDescription() {
         return description;
     }
@@ -106,6 +116,12 @@ public class Recipe extends BaseEntity{
         this.difficulty = difficulty;
     }
 
+    public Recipe addIngredient(Ingredient ingredient) {
+        ingredient.setRecipe(this);
+        this.ingredients.add(ingredient);
+        return this;
+    }
+
     public Set<Ingredient> getIngredients() {
         return ingredients;
     }
@@ -114,12 +130,23 @@ public class Recipe extends BaseEntity{
         this.ingredients = ingredients;
     }
 
+    public Recipe addNotes(String notes) {
+        this.setNotes(new Notes(this, notes));
+        return this;
+    }
+
     public Notes getNotes() {
         return notes;
     }
 
     public void setNotes(Notes notes) {
         this.notes = notes;
+        notes.setRecipe(this);
+    }
+
+    public Recipe addCategory(Category category) {
+        this.getCategories().add(category);
+        return this;
     }
 
     public Set<Category> getCategories() {

@@ -3,7 +3,6 @@ package com.example.spring5recipeapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
 public class Notes extends BaseEntity {
@@ -12,6 +11,14 @@ public class Notes extends BaseEntity {
     private Recipe recipe;
     @Lob
     private String recipeNotes;
+
+    public Notes() {
+    }
+
+    public Notes(Recipe recipe, String recipeNotes) {
+        this.recipe = recipe;
+        this.recipeNotes = recipeNotes;
+    }
 
     public Recipe getRecipe() {
         return recipe;
