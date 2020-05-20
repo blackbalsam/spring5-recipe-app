@@ -21,7 +21,8 @@ public class Recipe extends BaseEntity{
     private Difficulty difficulty;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
-    private Set<Ingredient> ingredients = new HashSet<>();
+    private Set<Ingredient> ingredients;
+
     @Lob
     private Byte[] image;
 
@@ -32,16 +33,103 @@ public class Recipe extends BaseEntity{
     @JoinTable(name = "recipe_category",
             joinColumns = @JoinColumn(name = "recipe_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories = new HashSet<>();
+    private Set<Category> categories;
 
-    public Recipe() {
+    public static class RecipeBuilder {
+        private String description;
+        private Integer prepTime;
+        private Integer cookTime;
+        private Integer servings;
+        private String source;
+        private String url;
+        private String directions;
+        private Difficulty difficulty;
+        private Set<Ingredient> ingredients;
+        private Byte[] image;
+        private Notes notes;
+        private Set<Category> categories;
+
+        public RecipeBuilder() {
+        }
+
+        public RecipeBuilder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public RecipeBuilder setPrepTime(Integer prepTime) {
+            this.prepTime = prepTime;
+            return this;
+        }
+
+        public RecipeBuilder setCookTime(Integer cookTime) {
+            this.cookTime = cookTime;
+            return this;
+        }
+
+        public RecipeBuilder setServings(Integer servings) {
+            this.servings = servings;
+            return this;
+        }
+
+        public RecipeBuilder setSource(String source) {
+            this.source = source;
+            return this;
+        }
+
+        public RecipeBuilder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public RecipeBuilder setDirections(String directions) {
+            this.directions = directions;
+            return this;
+        }
+
+        public RecipeBuilder setDifficulty(Difficulty difficulty) {
+            this.difficulty = difficulty;
+            return this;
+        }
+
+        public RecipeBuilder setIngredients(Set<Ingredient> ingredients) {
+            this.ingredients = ingredients;
+            return this;
+        }
+
+        public RecipeBuilder setImage(Byte[] image) {
+            this.image = image;
+            return this;
+        }
+
+        public RecipeBuilder setNotes(String notes) {
+            this.notes = new Notes(notes);
+            return this;
+        }
+
+        public RecipeBuilder setCategories(Set<Category> categories) {
+            this.categories = categories;
+            return this;
+        }
+
+        public Recipe build() {
+            return new Recipe(this);
+        }
     }
 
-    public Recipe(String description, Integer prepTime, Integer cookTime, Difficulty difficulty) {
-        this.description = description;
-        this.prepTime = prepTime;
-        this.cookTime = cookTime;
-        this.setDifficulty(difficulty);
+    private Recipe(RecipeBuilder recipeBuilder) {
+        this.description = recipeBuilder.description;
+        this.prepTime = recipeBuilder.prepTime;
+        this.cookTime = recipeBuilder.cookTime;
+        this.servings = recipeBuilder.servings;
+        this.source = recipeBuilder.source;
+        this.url = recipeBuilder.url;
+        this.directions = recipeBuilder.directions;
+        this.difficulty = recipeBuilder.difficulty;
+        this.setIngredients(recipeBuilder.ingredients);
+        this.image = recipeBuilder.image;
+        this.addNotes(recipeBuilder.notes);
+        this.setCategories(recipeBuilder.categories);
     }
 
     public String getDescription() {
@@ -117,6 +205,9 @@ public class Recipe extends BaseEntity{
     }
 
     public Recipe addIngredient(Ingredient ingredient) {
+        if (this.ingredients == null) {
+            this.ingredients = new HashSet<>();
+        }
         ingredient.setRecipe(this);
         this.ingredients.add(ingredient);
         return this;
@@ -130,8 +221,9 @@ public class Recipe extends BaseEntity{
         this.ingredients = ingredients;
     }
 
-    public Recipe addNotes(String notes) {
-        this.setNotes(new Notes(this, notes));
+    public Recipe addNotes(Notes notes) {
+        notes.setRecipe(this);
+        this.setNotes(notes);
         return this;
     }
 
@@ -145,6 +237,9 @@ public class Recipe extends BaseEntity{
     }
 
     public Recipe addCategory(Category category) {
+        if (this.categories == null) {
+            this.categories = new HashSet<>();
+        }
         this.getCategories().add(category);
         return this;
     }

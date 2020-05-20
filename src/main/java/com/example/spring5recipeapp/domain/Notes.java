@@ -15,6 +15,10 @@ public class Notes extends BaseEntity {
     public Notes() {
     }
 
+    public Notes(String recipeNotes) {
+        this.recipeNotes = recipeNotes;
+    }
+
     public Notes(Recipe recipe, String recipeNotes) {
         this.recipe = recipe;
         this.recipeNotes = recipeNotes;
