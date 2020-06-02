@@ -1,18 +1,16 @@
 package com.example.spring5recipeapp.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class UnitOfMeasure extends BaseEntity {
 
     private String description;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

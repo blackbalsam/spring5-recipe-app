@@ -1,9 +1,11 @@
 package com.example.spring5recipeapp.bootstrap;
 
 import com.example.spring5recipeapp.domain.*;
+import com.example.spring5recipeapp.exceptions.NotFoundException;
 import com.example.spring5recipeapp.repositories.CategoryRepository;
 import com.example.spring5recipeapp.repositories.RecipeRepository;
 import com.example.spring5recipeapp.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -13,8 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
+
+    public static final String EXPECTED_UOM_NOT_FOUND = "Expected UOM not found";
+    public static final String EXPECTED_CATEGORY_NOT_FOUND = "Expected Category not found";
 
     private final CategoryRepository categoryRepository;
     private final RecipeRepository recipeRepository;
@@ -39,37 +45,37 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         Optional<UnitOfMeasure> eachUomOptional = unitOfMeasureRepository.findByDescription("Each");
 
         if (!eachUomOptional.isPresent()) {
-            throw new RuntimeException("Expected UOM not found");
+            throw new NotFoundException(EXPECTED_UOM_NOT_FOUND);
         }
 
         Optional<UnitOfMeasure> tableSpoonOptional = unitOfMeasureRepository.findByDescription("Tablespoon");
 
         if (!tableSpoonOptional.isPresent()) {
-            throw new RuntimeException("Expected UOM not found");
+            throw new NotFoundException(EXPECTED_UOM_NOT_FOUND);
         }
 
         Optional<UnitOfMeasure> teaSpoonOptional = unitOfMeasureRepository.findByDescription("Teaspoon");
 
         if (!teaSpoonOptional.isPresent()) {
-            throw new RuntimeException("Expected UOM not found");
+            throw new NotFoundException(EXPECTED_UOM_NOT_FOUND);
         }
 
         Optional<UnitOfMeasure> dashOptional = unitOfMeasureRepository.findByDescription("Dash");
 
         if (!dashOptional.isPresent()) {
-            throw new RuntimeException("Expected UOM not found");
+            throw new NotFoundException(EXPECTED_UOM_NOT_FOUND);
         }
 
         Optional<UnitOfMeasure> pintOptional = unitOfMeasureRepository.findByDescription("Pint");
 
         if (!pintOptional.isPresent()) {
-            throw new RuntimeException("Expected UOM not found");
+            throw new NotFoundException(EXPECTED_UOM_NOT_FOUND);
         }
 
         Optional<UnitOfMeasure> cupOptional = unitOfMeasureRepository.findByDescription("Cup");
 
         if (!cupOptional.isPresent()) {
-            throw new RuntimeException("Expected UOM not found");
+            throw new NotFoundException(EXPECTED_UOM_NOT_FOUND);
         }
 
         //get optionals
@@ -85,13 +91,13 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         Optional<Category> americanCategoryOptional = categoryRepository.findByDescription("American");
 
         if (!americanCategoryOptional.isPresent()) {
-            throw new RuntimeException("Expected Category not found");
+            throw new NotFoundException(EXPECTED_CATEGORY_NOT_FOUND);
         }
 
         Optional<Category> mexicanCategoryOptional = categoryRepository.findByDescription("Mexican");
 
         if (!mexicanCategoryOptional.isPresent()) {
-            throw new RuntimeException("Expected Category not found");
+            throw new NotFoundException(EXPECTED_CATEGORY_NOT_FOUND);
         }
 
         //get categories
@@ -99,12 +105,12 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         Category mexicanCategory = mexicanCategoryOptional.get();
 
         //Guacamole recipe
-        Recipe guacRecipe = new Recipe.RecipeBuilder()
-                .setDescription("Perfect Guacamole")
-                .setPrepTime(10)
-                .setCookTime(0)
-                .setDifficulty(Difficulty.EASY)
-                .setDirections("1 Cut the avocado, remove flesh: Cut the avocados in half. Remove the pit. Score the inside of the avocado with a blunt knife and scoop out the flesh with a spoon. (See How to Cut and Peel an Avocado.) Place in a bowl.\n" +
+        Recipe guacRecipe = Recipe.builder()
+                .description("Perfect Guacamole")
+                .prepTime(10)
+                .cookTime(0)
+                .difficulty(Difficulty.EASY)
+                .directions("1 Cut the avocado, remove flesh: Cut the avocados in half. Remove the pit. Score the inside of the avocado with a blunt knife and scoop out the flesh with a spoon. (See How to Cut and Peel an Avocado.) Place in a bowl.\n" +
                         "\n" +
                         "2 Mash with a fork: Using a fork, roughly mash the avocado. (Don't overdo it! The guacamole should be a little chunky.)\n" +
                         "\n" +
@@ -120,33 +126,35 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
                         "\n" +
                         "\n" +
                         "Read more: https://www.simplyrecipes.com/recipes/perfect_guacamole/")
-                .setNotes("Simple Guacamole: The simplest version of guacamole is just mashed avocados with salt. Don’t let the lack of availability of other ingredients stop you from making guacamole.\n" +
+                .build()
+                .addNotes(Notes.builder()
+                        .recipeNotes("Simple Guacamole: The simplest version of guacamole is just mashed avocados with salt. Don’t let the lack of availability of other ingredients stop you from making guacamole.\n" +
                         "\n" +
                         "Quick guacamole: For a very quick guacamole just take a 1/4 cup of salsa and mix it in with your mashed avocados.\n" +
                         "\n" +
-                        "Don’t have enough avocados? To extend a limited supply of avocados, add either sour cream or cottage cheese to your guacamole dip. Purists may be horrified, but so what? It tastes great.")
-                .build()
-                .addIngredient(new Ingredient("ripe avocados", new BigDecimal(2), eachUom))
-                .addIngredient(new Ingredient("Kosher salt", new BigDecimal(".5"), teaSpoonUom))
-                .addIngredient(new Ingredient("fresh lime juice or lemon juice", new BigDecimal(2), tableSpoonUom))
-                .addIngredient(new Ingredient("minced red onion or thinly sliced green onion", new BigDecimal(2), tableSpoonUom))
-                .addIngredient(new Ingredient("serrano chiles, stems and seeds removed, minced", new BigDecimal(2), eachUom))
-                .addIngredient(new Ingredient("Cilantro", new BigDecimal(2), dashUom))
-                .addIngredient(new Ingredient("freshly grated black pepper", new BigDecimal(2), tableSpoonUom))
-                .addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", new BigDecimal(".5"), eachUom))
+                        "Don’t have enough avocados? To extend a limited supply of avocados, add either sour cream or cottage cheese to your guacamole dip. Purists may be horrified, but so what? It tastes great.").build())
+                .addIngredient(Ingredient.builder().description("ripe avocados").amount(new BigDecimal(2)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder().description("Kosher salt").amount(new BigDecimal(".5")).uom(teaSpoonUom).build())
+                .addIngredient(Ingredient.builder().description("fresh lime juice or lemon juice").amount(new BigDecimal(2)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder().description("minced red onion or thinly sliced green onion").amount(new BigDecimal(2)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder().description("serrano chiles).amount(stems and seeds removed, minced").amount(new BigDecimal(2)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder().description("Cilantro").amount(new BigDecimal(2)).uom(dashUom).build())
+                .addIngredient(Ingredient.builder().description("freshly grated black pepper").amount(new BigDecimal(2)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder().description("ripe tomato, seeds and pulp removed, chopped").amount(new BigDecimal(".5")).uom(eachUom).build())
                 .addCategory(americanCategory)
                 .addCategory(mexicanCategory);
 
         recipes.add(guacRecipe);
+        log.debug("Added guacRecipe: " + guacRecipe);
 
 
         //Taco recipe
-        Recipe tacoRecipe = new Recipe.RecipeBuilder()
-                .setDescription("Spicy Grilled Chicken Taco")
-                .setPrepTime(9)
-                .setCookTime(20)
-                .setDifficulty(Difficulty.MODERATE)
-                .setDirections("1 Prepare a gas or charcoal grill for medium-high, direct heat.\n" +
+        Recipe tacoRecipe = Recipe.builder()
+                .description("Spicy Grilled Chicken Taco")
+                .prepTime(9)
+                .cookTime(20)
+                .difficulty(Difficulty.MODERATE)
+                .directions("1 Prepare a gas or charcoal grill for medium-high, direct heat.\n" +
                         "\n" +
                         "2 Make the marinade and coat the chicken: In a large bowl, stir together the chili powder, oregano, cumin, sugar, salt, garlic and orange zest. Stir in the orange juice and olive oil to make a loose paste. Add the chicken to the bowl and toss to coat all over.\n" +
                         "\n" +
@@ -164,7 +172,9 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
                         "\n" +
                         "\n" +
                         "Read more: https://www.simplyrecipes.com/recipes/spicy_grilled_chicken_tacos/")
-                .setNotes("We have a family motto and it is this: Everything goes better in a tortilla.\n" +
+                .build()
+                .addNotes(Notes.builder()
+                        .recipeNotes("We have a family motto and it is this: Everything goes better in a tortilla.\n" +
                         "\n" +
                         "Any and every kind of leftover can go inside a warm tortilla, usually with a healthy dose of pickled jalapenos. I can always sniff out a late-night snacker when the aroma of tortillas heating in a hot pan on the stove comes wafting through the house.\n" +
                         "\n" +
@@ -176,30 +186,50 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
                         "\n" +
                         "\n" +
                         "Read more: https://www.simplyrecipes.com/recipes/spicy_grilled_chicken_tacos/")
-                .build()
-                .addIngredient(new Ingredient("ancho chili powder", new BigDecimal(2), tableSpoonUom))
-                .addIngredient(new Ingredient("ancho chili powder", new BigDecimal(1), teaSpoonUom))
-                .addIngredient(new Ingredient("dried cumin", new BigDecimal(1), teaSpoonUom))
-                .addIngredient(new Ingredient("sugar", new BigDecimal(1), teaSpoonUom))
-                .addIngredient(new Ingredient("salt", new BigDecimal(".5"), teaSpoonUom))
-                .addIngredient(new Ingredient("Clove of garlic, finely chopped", new BigDecimal(1), eachUom))
-                .addIngredient(new Ingredient("finely grated orange zest", new BigDecimal(1), tableSpoonUom))
-                .addIngredient(new Ingredient("fresh-squeezed orange juice", new BigDecimal(3), tableSpoonUom))
-                .addIngredient(new Ingredient("olive oil", new BigDecimal(2), tableSpoonUom))
-                .addIngredient(new Ingredient("skinless, boneless chicken thighs", new BigDecimal(4), eachUom))
-                .addIngredient(new Ingredient("small corn tortillas", new BigDecimal(8), eachUom))
-                .addIngredient(new Ingredient("packed baby arugula", new BigDecimal(3), cupUom))
-                .addIngredient(new Ingredient("medium ripe avocados, sliced", new BigDecimal(2), eachUom))
-                .addIngredient(new Ingredient("radishes, thinly sliced", new BigDecimal(4), eachUom))
-                .addIngredient(new Ingredient("cherry tomatoes, halved", new BigDecimal(".5"), pintUom))
-                .addIngredient(new Ingredient("red onion, thinly sliced", new BigDecimal(".25"), eachUom))
-                .addIngredient(new Ingredient("Roughly chopped cilantro", new BigDecimal(1), eachUom))
-                .addIngredient(new Ingredient("sour cream thinned with 1/4 cup milk", new BigDecimal(".5"), cupUom))
-                .addIngredient(new Ingredient("lime, cut into wedges", new BigDecimal(1), eachUom))
+                        .build())
+                .addIngredient(Ingredient.builder()
+                        .description("ancho chili powder").amount(new BigDecimal(2)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("ancho chili powder").amount(new BigDecimal(1)).uom(teaSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("dried cumin").amount(new BigDecimal(1)).uom(teaSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("sugar").amount(new BigDecimal(1)).uom(teaSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("salt").amount(new BigDecimal(".5")).uom(teaSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("Clove of garlic, finely chopped").amount(new BigDecimal(1)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("finely grated orange zest").amount(new BigDecimal(1)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("fresh-squeezed orange juice").amount(new BigDecimal(3)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("olive oil").amount(new BigDecimal(2)).uom(tableSpoonUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("skinless, boneless chicken thighs").amount(new BigDecimal(4)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("small corn tortillas").amount(new BigDecimal(8)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("packed baby arugula").amount(new BigDecimal(3)).uom(cupUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("medium ripe avocados, sliced").amount(new BigDecimal(2)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("radishes, thinly sliced").amount(new BigDecimal(4)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("cherry tomatoes, halved").amount(new BigDecimal(".5")).uom(pintUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("red onion, thinly sliced").amount(new BigDecimal(".25")).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("Roughly chopped cilantro").amount(new BigDecimal(1)).uom(eachUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("sour cream thinned with 1/4 cup milk").amount(new BigDecimal(".5")).uom(cupUom).build())
+                .addIngredient(Ingredient.builder()
+                        .description("lime, cut into wedges").amount(new BigDecimal(1)).uom(eachUom).build())
                 .addCategory(americanCategory)
                 .addCategory(mexicanCategory);
 
         recipes.add(tacoRecipe);
+        log.debug("Added tacoRecipe: " + tacoRecipe);
 
         return recipes;
     }

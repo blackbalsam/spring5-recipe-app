@@ -1,30 +1,22 @@
 package com.example.spring5recipeapp.domain;
 
+import lombok.*;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.util.Set;
 
+@Data
+@EqualsAndHashCode(exclude = {"recipes"})
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Category extends BaseEntity {
 
     private String description;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "categories")
     private Set<Recipe> recipes;
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<Recipe> getRecipes() {
-        return recipes;
-    }
-
-    public void setRecipes(Set<Recipe> recipes) {
-        this.recipes = recipes;
-    }
 }
