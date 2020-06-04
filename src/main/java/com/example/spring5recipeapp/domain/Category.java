@@ -6,7 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(exclude = {"recipes"})
 @NoArgsConstructor
 @AllArgsConstructor
